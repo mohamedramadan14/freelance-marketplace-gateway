@@ -17,7 +17,7 @@ class AuthMiddleware {
     next();
   }
 
-  public checkAuth(req: Request, _res: Response, next: NextFunction): void {
+  public checkAuthentication(req: Request, _res: Response, next: NextFunction): void {
     if (!req.currentUser) {
       throw new BadRequestError('User is not authenticated', 'Gateway Service - call: checkAuth()');
     }

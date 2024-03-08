@@ -9,19 +9,23 @@ export class AxiosService {
   }
 
   public createAxiosInstance(baseUrl: string, serviceName?: string): ReturnType<typeof axios.create> {
-    let requestGatewayToken = '';
+    let requestGatewayToken = undefined;
+
     if (serviceName) {
       requestGatewayToken = jwt.sign({ id: serviceName }, `${config.GATEWAY_JWT_TOKEN}`);
+      console.log('requestGatewayToken: ', requestGatewayToken);
     }
-    const axiosInstance: ReturnType<typeof axios.create> = axios.create({
+
+    const instance: ReturnType<typeof axios.create> = axios.create({
       baseURL: baseUrl,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        gatewayToken: requestGatewayToken
+        gatewaytoken: requestGatewayToken
       },
-      withCredentials: true // for cookies
+      withCredentials: true
     });
-    return axiosInstance;
+
+    return instance;
   }
 }

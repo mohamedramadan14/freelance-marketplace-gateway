@@ -1,6 +1,5 @@
 import http from 'http';
 
-import { config } from '@gateway/config';
 import compression from 'compression';
 import cookieSession from 'cookie-session';
 import cors from 'cors';
@@ -10,8 +9,10 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import { StatusCodes } from 'http-status-codes';
 import { Logger } from 'winston';
+import { config } from '@gateway/config';
 import { elasticsearch } from '@gateway/elasticsearch';
-import { appRoutes } from 'routes';
+import { appRoutes } from '@gateway/routes';
+import { axiosAuthInstance } from '@gateway/services/api/auth.service';
 
 const SERVER_PORT = 4000;
 const logger: Logger = winstonLogger(`${config.ELASTICSEARCH_URL}`, 'API Gateway', Level.debug);
@@ -47,11 +48,18 @@ export class GatewayServer {
     app.use(helmet());
     app.use(
       cors({
-        origin: '', // TODO: Change this to config.CLIENT_URL
+        origin: '*', // TODO: Change this to config.CLIENT_URL
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
       })
     );
+
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+      if (req.session?.jwt) {
+        axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session.jwt}`;
+      }
+      next();
+    });
   }
 
   private compressionEncodeMiddleware(app: Application): void {
