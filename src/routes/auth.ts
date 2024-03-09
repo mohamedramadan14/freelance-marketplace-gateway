@@ -1,4 +1,5 @@
 import { Password } from '@gateway/controllers/auth/password';
+import { Seed } from '@gateway/controllers/auth/seed';
 import { Signin } from '@gateway/controllers/auth/signin';
 import { Signup } from '@gateway/controllers/auth/signup';
 import { VerifyEmail } from '@gateway/controllers/auth/verify-email';
@@ -18,6 +19,7 @@ class AuthRoutes {
     this.router.put('/auth/forgot-password', Password.forgotPassword);
     this.router.put('/auth/reset-password', Password.resetPassword);
     this.router.put('/auth/change-password', Password.changePassword);
+    this.router.put('/auth/seed/:count', Seed.seedUsers);
     return this.router;
   }
 }
